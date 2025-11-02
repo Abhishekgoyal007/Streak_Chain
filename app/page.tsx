@@ -31,14 +31,32 @@ type Achievement = {
 };
 
 // ============ COMPONENTS ============
-const MetaMaskConnect = ({ address, onConnect, onDisconnect }: any) => (
-  <button
-    onClick={() => address ? onDisconnect() : onConnect("0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb")}
-    className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl font-medium shadow-lg shadow-orange-500/30 transition-all hover:shadow-xl hover:shadow-orange-500/40 hover:scale-105"
-  >
-    {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "Connect Wallet"}
-  </button>
-);
+const MetaMaskConnect = ({ address, onConnect, onDisconnect }: any) => {
+  const [hasProvider, setHasProvider] = useState(false);
+
+  useEffect(() => {
+    setHasProvider(typeof (window as any).ethereum !== "undefined");
+  }, []);
+
+  async function connect() {
+    if (!hasProvider) return;
+    try {
+      const accounts = await (window as any).ethereum.request({ method: "eth_requestAccounts" });
+      if (accounts && accounts[0]) onConnect(accounts[0]);
+    } catch (err) {
+      console.error("MetaMask connect error", err);
+    }
+  }
+
+  return (
+    <button
+      onClick={() => address ? onDisconnect() : connect()}
+      className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl font-medium shadow-lg shadow-orange-500/30 transition-all hover:shadow-xl hover:shadow-orange-500/40 hover:scale-105"
+    >
+      {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : hasProvider ? "Connect Wallet" : "Install MetaMask"}
+    </button>
+  );
+};
 
 const YearHeatmap = ({ habitData, selectedHabit, habits, onDateClick }: any) => {
   const currentYear = new Date().getFullYear();
