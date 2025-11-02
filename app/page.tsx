@@ -223,11 +223,11 @@ const CalendarGrid = ({ habitData, selectedHabit, currentMonth, currentYear, onT
 
 const AnalyticsDashboard = ({ habitData, selectedHabit, darkMode }: any) => {
   const ticks = selectedHabit ? (habitData[selectedHabit.id] || new Set()) : new Set();
-  const tickArray = Array.from(ticks);
+  const tickArray: string[] = Array.from(ticks);
 
   const dayOfWeekStats = useMemo(() => {
     const stats = [0, 0, 0, 0, 0, 0, 0];
-    tickArray.forEach(dateStr => {
+    tickArray.forEach((dateStr: string) => {
       const day = new Date(dateStr).getDay();
       stats[day]++;
     });
@@ -237,7 +237,7 @@ const AnalyticsDashboard = ({ habitData, selectedHabit, darkMode }: any) => {
 
   const monthlyStats = useMemo(() => {
     const stats = Array(12).fill(0);
-    tickArray.forEach(dateStr => {
+    tickArray.forEach((dateStr: string) => {
       const month = new Date(dateStr).getMonth();
       stats[month]++;
     });
@@ -440,7 +440,7 @@ export default function Home() {
     saveData(address, 'darkMode', newMode);
   };
 
-  const ticks = selectedHabit ? (habitData[selectedHabit.id] || new Set()) : new Set();
+  const ticks: Set<string> = selectedHabit ? (habitData[selectedHabit.id] || new Set()) : new Set();
   const streak = useMemo(() => calcCurrentStreak(ticks), [ticks]);
   const bestStreak = useMemo(() => calcBestStreak(ticks), [ticks]);
   const achievements = useMemo(() => getAchievements(ticks, streak, bestStreak), [ticks, streak, bestStreak]);
